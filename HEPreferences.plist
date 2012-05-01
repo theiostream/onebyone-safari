@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+
+<plist version="1.0">
+<dict>
+   <key>entry</key>
+   <dict>
+      <key>cell</key>
+         <string>PSLinkCell</string>
+         <key>icon</key>
+         <string>TestIcon.png</string>
+         <key>label</key>
+         <string>History Enhancer</string>
+      </dict>
+      
+      <key>items</key>
+      <array>
+         <dict>
+         	<key>cell</key>
+         	<string>PSGroupCell</string>
+         	<key>label</key>
+         	<string>History</string>
+         	<key>footerText</key>
+         	<string>Please note that if enabled, the 'Earlier Today' folder will *not* be deletable.</string>
+         </dict>
+         
+         <dict>
+            <key>cell</key>
+            <string>PSSwitchCell</string>
+            <key>default</key>
+            <false/>
+            <key>defaults</key>
+            <string>am.theiostre.henhancer</string>
+            <key>key</key>
+            <string>HEEarlierToday</string>
+            <key>label</key>
+            <string>'Earlier Today' folder</string>
+            <key>PostNotification</key>
+            <string>am.theiostre.henhancer.reload</string>
+         </dict>
+         
+         <dict>
+         	<key>cell</key>
+         	<string>PSGroupCell</string>
+         	<key>label</key>
+         	<string>Toolbar</string>
+         </dict>
+         
+         <dict>
+            <key>cell</key>
+            <string>PSSwitchCell</string>
+            <key>default</key>
+            <true/>
+            <key>defaults</key>
+            <string>am.theiostre.henhancer</string>
+            <key>key</key>
+            <string>HEClearButton</string>
+            <key>label</key>
+            <string>Clear button</string>
+            <key>PostNotification</key>
+            <string>am.theiostre.henhancer.reload</string>
+         </dict>
+         
+         <dict>
+            <key>cell</key>
+            <string>PSSwitchCell</string>
+            <key>default</key>
+            <true/>
+            <key>defaults</key>
+            <string>am.theiostre.henhancer</string>
+            <key>key</key>
+            <string>HEEditButton</string>
+            <key>label</key>
+            <string>Edit button</string>
+            <key>PostNotification</key>
+            <string>am.theiostre.henhancer.reload</string>
+         </dict>
+         
+         <dict>
+         	<key>cell</key>
+         	<string>PSGroupCell</string>
+         	<key>footerText</key>
+         	<string>Idea by Ariel Aouizerate &amp; Yaniv Trodjman, and coded by theiostream.</string>
+         </dict>
+      </array>
+      
+      <key>title</key>
+      <string>History Enhancer</string>
+   </dict>
+</plist>
