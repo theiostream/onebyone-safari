@@ -8,9 +8,9 @@
       <key>cell</key>
          <string>PSLinkCell</string>
          <key>icon</key>
-         <string>TestIcon.png</string>
+         <string>HistoryEnhancer.png</string>
          <key>label</key>
-         <string>History Enhancer</string>
+         <string>OneByOne Safari</string>
       </dict>
       
       <key>items</key>
@@ -85,6 +85,6 @@
       </array>
       
       <key>title</key>
-      <string>History Enhancer</string>
+      <string>OneByOne Safari</string>
    </dict>
 </plist>
