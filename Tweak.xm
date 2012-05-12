@@ -3,7 +3,6 @@
 #import <Foundation2/NSCalendarDate.h>
 
 // I should rewrite the whole HistoryTableViewController.
-// test commit
 
 /*
 	TODO:
@@ -20,6 +19,7 @@
 + (id)sharedBrowserController;
 - (NSArray *)recentSearches;
 - (void)saveRecentSearches:(id)searches;
+- (UIToolbar *)buttonBar;
 @end
 
 // AddressView (the whole address view, including recent searches)
