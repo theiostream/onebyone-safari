@@ -46,6 +46,10 @@
 - (HistoryTableViewController *)topHistoryTableViewController;
 @end
 
+@interface CompletionTableViewController : UITableViewController
+@property(assign, nonatomic) AddressView *dataSourceAndDelegateForTableView;
+@end
+
 // Globals
 static BOOL editing = NO;
 static BOOL fuckyousafari = NO;
@@ -88,6 +92,16 @@ static BOOL HEItemIsToday(id date, BOOL flag) {
 
 static id HEHistoryItemForIndex(NSUInteger index, NSCalendarDate *date) {
 	return [[%c(History) sharedHistory] itemAtIndex:index fromDate:date];
+}
+
+static void HEDeleteSelectedRow(UITableView *tableView, NSIndexPath *indexPath) {
+  id browserController = [%c(BrowserController) sharedBrowserController];
+
+  NSMutableArray *re = [NSMutableArray arrayWithArray:[browserController recentSearches]];
+  [re removeObject:[[[tableView cellForRowAtIndexPath:indexPath] textLabel] text]];
+  [browserController saveRecentSearches:re];
+
+  [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 // ***** END HELPERS *****
@@ -263,6 +277,31 @@ static NSInteger s_cnt = -1;
 		s_cnt--;
 		[tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 	}
+}
+%end
+
+// for iPad search history
+%hook CompletionTableViewController
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+  if ([self.dataSourceAndDelegateForTableView _sectionIndexForRecentSearches] == 0)
+    return [[[%c(BrowserController) sharedBrowserController] recentSearches] count];
+  else
+    return %orig;
+}
+
+%new(c@:@@)
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+	return (
+		indexPath.section == [self.dataSourceAndDelegateForTableView _sectionIndexForRecentSearches] &&
+		[[MSHookIvar<UITextField *>(self.dataSourceAndDelegateForTableView, "_searchTextField") text] isEqualToString:@""]
+	);
+}
+
+%new(v@:@i@)
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+  if (editingStyle == UITableViewCellEditingStyleDelete) {
+    HEDeleteSelectedRow(tableView, indexPath);
+  }
 }
 %end
 
