@@ -104,6 +104,14 @@ static void HEDeleteSelectedRow(UITableView *tableView, NSIndexPath *indexPath) 
   [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
+static BOOL HEShowingRecentSearches(AddressView *addressView, NSIndexPath *indexPath) {
+	// it somehow crashes if the searchfield's text != @"" and you try to delete items.
+	return (
+		indexPath.section == [addressView _sectionIndexForRecentSearches] &&
+		[[MSHookIvar<UITextField *>(addressView, "_searchTextField") text] isEqualToString:@""]
+	);
+}
+
 // ***** END HELPERS *****
 // **************************
 
@@ -244,64 +252,46 @@ static void HEDeleteSelectedRow(UITableView *tableView, NSIndexPath *indexPath) 
 %end
 
 // FIXME: Improve this by interacting directly with the source for the tableView
-static NSInteger s_cnt = -1;
 %hook AddressView
-- (void)_hideCompletions {
-	%orig;
-	s_cnt = -1;
-}
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-	if (s_cnt == -1) s_cnt = %orig;
-	return s_cnt;
+    if ([self _sectionIndexForRecentSearches] == 0)
+        return [[[%c(BrowserController) sharedBrowserController] recentSearches] count];
+    else
+        return %orig;
 }
 
-%new
+%new(c@:@@)
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-	// it somehow crashes if the searchfield's text != @"" and you try to delete items.
-	return (
-		indexPath.section == [self _sectionIndexForRecentSearches] &&
-		[[MSHookIvar<UITextField *>(self, "_searchTextField") text] isEqualToString:@""]
-	);
+    return HEShowingRecentSearches(self, indexPath);
 }
 
-%new
+%new(v@:@i@)
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-	if (editingStyle == UITableViewCellEditingStyleDelete) {
-		id browserController = [%c(BrowserController) sharedBrowserController];
-		
-		NSMutableArray *re = [NSMutableArray arrayWithArray:[browserController recentSearches]];
-		[re removeObject:[[[tableView cellForRowAtIndexPath:indexPath] textLabel] text]];
-		[browserController saveRecentSearches:re];
-		
-		s_cnt--;
-		[tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-	}
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        HEDeleteSelectedRow(tableView, indexPath);
+    }
 }
 %end
 
 // for iPad search history
 %hook CompletionTableViewController
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-  if ([self.dataSourceAndDelegateForTableView _sectionIndexForRecentSearches] == 0)
-    return [[[%c(BrowserController) sharedBrowserController] recentSearches] count];
-  else
-    return %orig;
+    if ([self.dataSourceAndDelegateForTableView _sectionIndexForRecentSearches] == 0)
+        return [[[%c(BrowserController) sharedBrowserController] recentSearches] count];
+    else
+        return %orig;
 }
 
 %new(c@:@@)
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-	return (
-		indexPath.section == [self.dataSourceAndDelegateForTableView _sectionIndexForRecentSearches] &&
-		[[MSHookIvar<UITextField *>(self.dataSourceAndDelegateForTableView, "_searchTextField") text] isEqualToString:@""]
-	);
+    return HEShowingRecentSearches(self.dataSourceAndDelegateForTableView, indexPath);
 }
 
 %new(v@:@i@)
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-  if (editingStyle == UITableViewCellEditingStyleDelete) {
-    HEDeleteSelectedRow(tableView, indexPath);
-  }
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        HEDeleteSelectedRow(tableView, indexPath);
+    }
 }
 %end
 
