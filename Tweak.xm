@@ -1,3 +1,12 @@
+/*%%%%%
+%% Tweak.xm
+%% Created by theiostream in 2012.
+%%
+%% OneByOne Safari
+%% (c) 2012 Colégio Visconde de Porto Seguro & Ariel Aouizerate
+%% Licensed under the MIT License.
+%%%%%*/
+
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryItem.h>
 #import <Foundation2/NSCalendarDate.h>
