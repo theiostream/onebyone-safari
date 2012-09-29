@@ -95,13 +95,13 @@ static id HEHistoryItemForIndex(NSUInteger index, NSCalendarDate *date) {
 }
 
 static void HEDeleteSelectedRow(UITableView *tableView, NSIndexPath *indexPath) {
-  id browserController = [%c(BrowserController) sharedBrowserController];
-
-  NSMutableArray *re = [NSMutableArray arrayWithArray:[browserController recentSearches]];
-  [re removeObject:[[[tableView cellForRowAtIndexPath:indexPath] textLabel] text]];
-  [browserController saveRecentSearches:re];
-
-  [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+	id browserController = [%c(BrowserController) sharedBrowserController];
+	
+	NSMutableArray *re = [NSMutableArray arrayWithArray:[browserController recentSearches]];
+	[re removeObject:[[[tableView cellForRowAtIndexPath:indexPath] textLabel] text]];
+	[browserController saveRecentSearches:re];
+	
+	[tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 static BOOL HEShowingRecentSearches(AddressView *addressView, NSIndexPath *indexPath) {
